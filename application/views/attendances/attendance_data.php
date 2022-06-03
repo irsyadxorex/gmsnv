@@ -70,7 +70,7 @@
                         </tr>
                         <tr>
                             <th>Nama </th>
-                            <td><span id="nama"></span> (<span id="posisi"></span>)</td>
+                            <td><span id="nama"></span> <span id="posisi"></span></td>
                         </tr>
                         <tr>
                             <th>Site</th>
@@ -136,7 +136,7 @@
         $(document).on('click', '#set_detail', function() {
             var qrcode = $(this).data('qrcode');
             var nama = $(this).data('nama');
-            var posisi = $(this).data('posisi');
+            // var posisi = $(this).data('posisi');
             var site = $(this).data('site');
             var label = $(this).data('label');
             var location = $(this).data('location');
@@ -155,7 +155,7 @@
             }
             $('#qrcode').text(qrcode);
             $('#nama').text(nama);
-            $('#posisi').text(posisi);
+            // $('#posisi').text(posisi);
             $('#site').text(site);
             $('#label').text(label);
             $('#location').text(location);

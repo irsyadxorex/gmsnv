@@ -18,7 +18,7 @@ class M_attendance extends CI_Model
             $this->db->join('users u', 'u.id =ga.id_user');
             $this->db->join('gms_qrcode_tags gqt', 'gqt.tagid=ga.tagid');
             $this->db->join('gms_shift gs', 'gs.id_shift = ga.id_shift');
-            $this->db->join('positions p', 'p.id_position =u.id_position ');
+            // $this->db->join('positions p', 'p.id_position =u.id_position ');
             $this->db->join('sites s', 's.id_site =u.id_site ');
         } else {
             $this->db->select('*,ga.tagid as att_tag');
@@ -27,7 +27,7 @@ class M_attendance extends CI_Model
             $this->db->join('gms_qrcode_tags gqt', 'gqt.tagid=ga.tagid');
             $this->db->join('gms_shift gs', 'gs.id_shift = ga.id_shift');
             $this->db->join('sites s', 's.id_site =u.id_site ');
-            $this->db->join('positions p', 'p.id_position =u.id_position ');
+            // $this->db->join('positions p', 'p.id_position =u.id_position ');
             $this->db->where('u.id_site', $id_site);
         };
 
