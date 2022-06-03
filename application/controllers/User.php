@@ -8,17 +8,19 @@ class User extends CI_Controller
     {
         parent::__construct();
         is_logged_in();
+        $this->load->model('M_user');
     }
 
     public function index()
     {
-        $users = $this->db->query("select *,r.`role` ,s.site 
-        from admin_users au
-        left join roles r on au.id_role =r.role_id 
-        LEFT JOIN sites s on s.site_id =id_site ;")->result_array();
+        if ($this->session->userdata('id_site') == 0) {
+            $users = $this->M_user->getUser()->result_array();
+        } else {
+            $users = $this->M_user->getUserSite()->result_array();
+        }
         $data = [
             'title' => 'Users',
-            'users' => $users
+            'users' => $users,
         ];
         $this->template->load('templates/template', 'users/user_data', $data);
     }
@@ -26,27 +28,21 @@ class User extends CI_Controller
     public function add()
     {
         $data = [
-            'title' => 'Add Users',
-            'sites' => $this->M_site->getSite()
+            'title' => 'Add User',
+            'sites' => $this->M_site->getSite(),
+            'roles' => $this->db->query('select * from roles where not id_role=1')->result_array(),
         ];
-        $this->form_validation->set_rules('name', 'Name', 'required');
-        $this->form_validation->set_rules('email', 'email', 'trim|valid_email|required|is_unique[admin_users.email]');
+        $this->form_validation->set_rules('nama', 'Nama', 'required');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required|is_unique[users.username]');
         $this->form_validation->set_rules('password1', 'Password', 'trim|required|matches[password2]');
         $this->form_validation->set_rules('password2', 'Confirm Password', 'trim|required|matches[password1]');
+        // $this->form_validation->set_rules('telephone', 'Telephone', 'required');
         $this->form_validation->set_rules('role', 'Role', 'required');
+        $this->form_validation->set_rules('status', 'Status', 'required');
         if ($this->form_validation->run() == false) {
             $this->template->load('templates/template', 'users/user_add', $data);
         } else {
-            $data = [
-                'name' => $this->input->post('name'),
-                'email' => $this->input->post('email'),
-                'password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
-                'id_site' => $this->input->post('site_id') != null ? $this->input->post('site_id') : 0,
-                'id_role' => $this->input->post('role'),
-                'id_area' => 0,
-                'new' => 0,
-            ];
-            $this->db->insert('admin_users', $data);
+            $this->M_user->addUserSite();
             $this->session->set_flashdata('message', '<div style="opacity: .6" class="alert alert-success" role="alert">
             Selamat! User baru berhasil ditambahkan!
             </div>');
@@ -54,47 +50,25 @@ class User extends CI_Controller
         }
     }
 
-    public function edit($id)
+    public function edit($username)
     {
-        $query = "select *,s.site from admin_users au left join sites s on au.id_site = s.site_id  where  au.id =$id ";
         $data = [
-            'title' => 'Update Users',
+            'title' => 'Update User',
             'sites' => $this->M_site->getSite(),
-            'user' => $this->db->query($query)->row_array()
+            'user' => $this->M_user->getUserSite($username)->row_array(),
+            'roles' => $this->db->query('select * from roles where not id_role=1')->result_array(),
         ];
 
-        $this->form_validation->set_rules('name', 'Name', 'required');
+        $this->form_validation->set_rules('nama', 'Nama', 'required');
         if ($this->input->post('password1')) {
             $this->form_validation->set_rules('password1', 'Password', 'trim|matches[password2]');
-        }
-        if ($this->input->post('password1')) {
             $this->form_validation->set_rules('password2', 'Confirm Password', 'trim|matches[password1]');
         }
-
         $this->form_validation->set_rules('role', 'Role', 'required');
         if ($this->form_validation->run() == false) {
             $this->template->load('templates/template', 'users/user_edit', $data);
         } else {
-            $id = $this->input->post('user_id');
-            if ($this->input->post('password1')) {
-                $data = [
-                    'name' => $this->input->post('name'),
-                    'password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
-                    'id_role' => $this->input->post('role'),
-                    'id_area' => 0,
-                    'new' => 0,
-                ];
-            } else {
-                $data = [
-                    'name' => $this->input->post('name'),
-                    'id_role' => $this->input->post('role'),
-                    'id_area' => 0,
-                    'new' => 0,
-                ];
-            }
-            $this->db->where('id', $id);
-            $this->db->update('admin_users', $data);
-
+            $this->M_user->editUserSite();
             $this->session->set_flashdata('message', '<div style="opacity: .6" class="alert alert-success" role="alert">
             Selamat! User berhasil diupdate!
             </div>');
@@ -102,13 +76,14 @@ class User extends CI_Controller
         }
     }
 
-
-
     public function delete()
     {
-        $id = $this->input->post('user_id');
-        $this->db->where('id', $id);
-        $this->db->delete('admin_users');
+        $username = $this->input->post('username');
+        // $data = [
+        //     'status' => 0,
+        // ];
+        $this->db->where('username', $username);
+        $this->db->delete('users');
         $this->session->set_flashdata('message', '<div style="opacity: .6" class="alert alert-success" role="alert">
             Selamat! User berhasil dihapus!
             </div>');

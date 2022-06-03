@@ -7,24 +7,24 @@ class M_checkpoint extends CI_Model
     // start datatables
     var $column_order = array(null, 'currentdatetime', 'name', 'site'); //set column field database for datatable orderable
     var $column_search = array('currentdatetime', 'name', 'site'); //set column field database for datatable searchable
-    var $order = array('che_id' => 'desc'); // default order
+    var $order = array('id_check' => 'desc'); // default order
 
     private function _get_datatables_query()
     {
-        $site_id = $this->fungsi->user_login()->id_site;
-        if ($site_id == 0) {
+        $id_site = $this->session->userdata('id_site');
+        if ($id_site == 0) {
             $this->db->select('*');
-            $this->db->from('gms_nfc_checkpoints');
-            $this->db->join('employees', 'gms_nfc_checkpoints.nik = employees.nik');
-            $this->db->join('gms_nfc_tags', 'gms_nfc_checkpoints.tagid = gms_nfc_tags.tagid');
-            $this->db->join('sites', 'gms_nfc_tags.idsite = sites.site_id');
-        } elseif ($site_id != null) {
+            $this->db->from('gms_checkpoint_details gcd');
+            $this->db->join('gms_qrcode_tags gqt', 'gcd.tagid_user = gqt.tagid');
+            $this->db->join('users u', 'gcd.id_user = u.id');
+            $this->db->join('sites s', 'gcd.id_site = s.id_site');
+        } elseif ($id_site != null) {
             $this->db->select('*');
-            $this->db->from('gms_nfc_checkpoints');
-            $this->db->join('employees', 'gms_nfc_checkpoints.nik = employees.nik');
-            $this->db->join('gms_nfc_tags', 'gms_nfc_checkpoints.tagid = gms_nfc_tags.tagid');
-            $this->db->join('sites', 'gms_nfc_tags.idsite = sites.site_id');
-            $this->db->where('gms_nfc_tags.idsite', $site_id);
+            $this->db->from('gms_checkpoint_details gcd');
+            $this->db->join('gms_qrcode_tags gqt', 'gcd.tagid_user = gqt.tagid');
+            $this->db->join('users u', 'gcd.id_user = u.id');
+            $this->db->join('sites s', 'gcd.id_site = s.id_site');
+            $this->db->where('gcd.id_site', $id_site);
         };
 
         $i = 0;
@@ -65,8 +65,32 @@ class M_checkpoint extends CI_Model
     }
     function count_all()
     {
-        $this->db->from('gms_nfc_checkpoints');
+        $this->db->from('gms_checkpoint_details');
         return $this->db->count_all_results();
     }
     // end datatables
+
+
+    public function get_checkpoints()
+    {
+        // $checkpoints = $this->db->query("select * from sites s , gms_checkpoints gc ,users u, gms_qrcode_tags gqt WHERE gc.id_user = u.id and gc.tagid =gqt.tagid and gqt.id_site = s.id_site order by 'desc' ;")->result_array();
+        // return $checkpoints;
+        $id_site = $this->session->userdata('id_site');
+        if ($id_site == 0) {
+            $this->db->select('*');
+            $this->db->from('gms_checkpoint_details gcd');
+            $this->db->join('gms_qrcode_tags gqt', 'gcd.tagid_user = gqt.tagid');
+            $this->db->join('users u', 'gcd.id_user = u.id');
+            $this->db->join('sites s', 'gcd.id_site = s.id_site');
+        } elseif ($id_site != null) {
+            $this->db->select('*');
+            $this->db->from('gms_checkpoint_details gcd');
+            $this->db->join('gms_qrcode_tags gqt', 'gcd.tagid_user = gqt.tagid');
+            $this->db->join('users u', 'gcd.id_user = u.id');
+            $this->db->join('sites s', 'gcd.id_site = s.id_site');
+            $this->db->where('gcd.id_site', $id_site);
+        };
+        $query = $this->db->get()->result_array();
+        return $query;
+    }
 }

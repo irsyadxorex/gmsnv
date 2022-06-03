@@ -107,7 +107,7 @@ $html .= '
                     <td>DANRU</td>
                     <td>: ';
 foreach ($danru as $d) {
-    $html .= $d['name'] . ', ';
+    $html .= $d['nama'] . ', ';
 }
 $html .= '
                     </td>
@@ -137,13 +137,13 @@ foreach ($checkpoints as $checkpoint) {
         <tbody>
             <tr>
                 <td style="width:30px;text-align:center;">' .  $n++ . '</td>
-                <td  style="width:150px;">' . $checkpoint['name'] . '</td>
-                <td  style="width:60px;text-align:center;">' . indo_time($checkpoint['jam']) . '</td> 
-                <td  style="width:200px;">' . $checkpoint['location'] . '</td>';
+                <td  style="width:150px;">' . $checkpoint['nama'] . '</td>
+                <td  style="width:60px;text-align:center;">' . indo_time($checkpoint['currentdatetime']) . '</td> 
+                <td  style="width:200px;">' . $checkpoint['lokasi'] . '</td>';
     if ($checkpoint['isclear'] == 1) {
         $html .= '<td  style="width:200px;">Kondusif</td>';
-    } elseif ($checkpoint['isclear'] == 0) {
-        $html .= '<td  style="width:200px;">Tidak Kondusif - ' . $checkpoint['desc'] . '</td>';
+    } elseif ($checkpoint['isclear'] == 2) {
+        $html .= '<td  style="width:200px;">Tidak Kondusif - ' . $checkpoint['note'] . '</td>';
     }
     $html .= '
             </tr>
@@ -185,7 +185,7 @@ $pdf->writeHTML($html, true, false, true, false, '');
 
 //Close and output PDF document
 ob_clean();
-$pdf->Output('CheckpointReport_' . $date . '_' . $site['site'] . '.pdf', 'D');
+$pdf->Output('CheckpointReport_' . $date . '_' . $site['site'] . '.pdf', 'I');
 
 //============================================================+
 // END OF FILE

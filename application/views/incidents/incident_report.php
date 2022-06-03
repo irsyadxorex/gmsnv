@@ -53,7 +53,7 @@
                                     </td>
                                     <td class="text-center">
                                         <a href="<?= base_url('uploads/') . $incident['doc']; ?>" class="btn btn-sm btn-success"><i class="fa fa-download"></i> Download Report</a>
-                                        <a href="" class="btn btn-sm btn-warning"><i class="fa fa-cogs"></i> Update Report</a>
+                                        <a href="<?= base_url('report/incident/update/') . $incident['arid']; ?>" class="btn btn-sm btn-warning"><i class="fa fa-cogs"></i> Update Report</a>
                                     </td>
                                 </tr>
                             <?php endforeach ?>

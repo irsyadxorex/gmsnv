@@ -107,7 +107,7 @@ $html .= '
                     <td>DANRU</td>
                     <td>: ';
 foreach ($danru as $d) {
-    $html .= $d['name'] . ', ';
+    $html .= $d['nama'] . ', ';
 }
 $html .= '
                     </td>
@@ -147,7 +147,7 @@ foreach ($activities as $activity) {
             <tr>
                 <td style="width:30px;text-align:center;">' .  $n++ . '</td>
                 <td  style="width:60px;text-align:center;">' . indo_time($activity['jam']) . '</td> 
-                <td  style="width:350px;">Petugas: ' . $activity['name'] . '<br><br>' . $activity['activity'] . '</td>
+                <td  style="width:350px;">Petugas: ' . $activity['nama'] . '<br><br>' . $activity['activity'] . '</td>
                 <td  style="width:200px;"><img src="https://hris.tpm-facility.com/assets/imagesofgms/activities/' . $activity['images'] . '" ></td>
             </tr>
         <tbody>
@@ -172,9 +172,9 @@ $html .=    '
                 <tr>
                     <th style="width:30px;text-align:center;font-weight:bold">NO</th>
                     <th style="width:200px;text-align:center;font-weight:bold">PETUGAS</th>
-                    <th style="width:150px;text-align:center;font-weight:bold">POSISI</th>
-                    <th style="width:160px;text-align:center;font-weight:bold">KEHADIRAN</th>
-                    <th style="width:100px;text-align:center;font-weight:bold">NOTE</th>
+                    <th style="width:130px;text-align:center;font-weight:bold">POSISI</th>
+                    <th style="width:130px;text-align:center;font-weight:bold">KEHADIRAN</th>
+                    <th style="width:150px;text-align:center;font-weight:bold">WAKTU</th>
                 </tr>
             </thead>';
 $n = 1;
@@ -183,14 +183,16 @@ foreach ($attendance as $att) {
             <tbody>
             <tr>
                 <td style="width:30px;text-align:center;">' .  $n++ . '</td>
-                <td  style="width:200px;">' . $att['name'] . '</td> 
-                <td  style="width:150px;">' . $att['position'] . '</td>
-                <td  style="width:160px;">' . $att['keterangan'] . '</td>';
-    if ($att['hours'] != 0) {
-        $html .= '<td  style="width:100px;">' . $att['hours'] . ' Jam' . '</td>';
-    } else {
-        $html .= '<td  style="width:100px;"></td>';
-    }
+                <td  style="width:200px;">' . $att['nama'] . '</td> 
+                <td  style="width:130px;">' . $att['position'] . '</td>
+                <td  style="width:130px;">' . $att['keterangan'] . '</td>
+                <td  style="width:150px;text-align:center;">' . indo_time($att['datetime_in']) . ' - ' . indo_time($att['datetime_out']) . '</td>';
+
+    // if ($att['hours'] != 0) {
+    //     $html .= '<td  style="width:100px;">' . $att['hours'] . ' Jam' . '</td>';
+    // } else {
+    //     $html .= '<td  style="width:100px;"></td>';
+    // }
 
     $html .= '
            </tr>

@@ -19,15 +19,18 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
+                    <?= $this->session->flashdata('message'); ?>
                     <table class="table table-striped table-bordered table-hover" id="dataActivity">
                         <thead>
                             <tr>
                                 <th class="text-center" width="10px">No</th>
                                 <th class="text-center" width="60px">Tanggal</th>
                                 <th class="text-center" width="50px">Jam</th>
-                                <th class="text-center" width="200px">Site</th>
-                                <th class="text-center" width="250px">Subject</th>
-                                <th class="text-center" width="50px">Status</th>
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <th class="text-center" width="100px">Site</th>
+                                <?php endif ?>
+                                <th class="text-center" width="500px">Subject</th>
+                                <th class="text-center" width="50px">Pelapor</th>
                                 <th class="text-center" width="200px">Opsi</th>
                             </tr>
                         </thead>
@@ -37,21 +40,15 @@
                             foreach ($incidents as $incident) : ?>
                                 <tr>
                                     <td class="text-center"><?= $n++; ?></td>
-                                    <td class="text-center"><?= indo_date($incident['thedate']); ?></td>
-                                    <td class="text-center"><?= $incident['thetime']; ?></td>
-                                    <td><?= $incident['site']; ?></td>
-                                    <td><?= $incident['title']; ?></td>
+                                    <td class="text-center"><?= indo_date($incident['tanggal']); ?></td>
+                                    <td class="text-center"><?= indo_sort_time($incident['waktu']); ?></td>
+                                    <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                        <td><?= $incident['site']; ?></td>
+                                    <?php endif ?>
+                                    <td><?= $incident['subjek']; ?></td>
+                                    <td class="text-center"><?= $incident['nama']; ?></td>
                                     <td class="text-center">
-                                        <?php if ($incident['status'] == 1) : ?>
-                                            <a class="label label-default"> Draft</a>
-                                        <?php elseif ($incident['status'] == 2) : ?>
-                                            <a class="label label-info"> Preview</a>
-                                        <?php elseif ($incident['status'] == 3) : ?>
-                                            <a class="label label-success"> Publish</a>
-                                        <?php endif ?>
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="<?= base_url('uploads/') . $incident['doc']; ?>" class="btn btn-sm btn-primary"><i class="fa fa-download"></i> Download Report</a>
+                                        <a href="<?= base_url('uploads/') . $incident['dokumentasi']; ?>" class="btn btn-sm btn-primary"><i class="fa fa-download"></i> Download Report</a>
                                     </td>
                                 </tr>
                             <?php endforeach ?>

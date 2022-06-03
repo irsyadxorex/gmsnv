@@ -25,13 +25,49 @@
                         <form action="<?= base_url('user/add'); ?>" method="post" enctype="multipart/form-data">
                             <div class="col-md-6">
                                 <div class="form-group <?= form_error('name') ? 'has-error' : ''; ?>">
-                                    <label for="name">Name * </label>
-                                    <input type="text" class="form-control" value="<?= set_value('name'); ?>" id="name" name="name">
+                                    <label for="nama">Name * </label>
+                                    <input type="text" class="form-control" value="<?= set_value('nama'); ?>" id="nama" name="nama" autofocus>
+                                </div>
+                                <div class="form-group <?= form_error('username') ? 'has-error' : ''; ?>">
+                                    <label for="text">Username * </label>
+                                    <input type="text" class="form-control" value="<?= set_value('username'); ?>" id="username" name="username" autocomplete="off">
+                                </div>
+                                <div class="form-group <?= form_error('telephone') ? 'has-error' : ''; ?>">
+                                    <label for="telephone">Telephone </label>
+                                    <input type="number" class="form-control" value="<?= set_value('telephone'); ?>" id="telephone" name="telephone">
                                 </div>
                                 <div class="form-group <?= form_error('email') ? 'has-error' : ''; ?>">
-                                    <label for="email">Email * </label>
-                                    <input type="text" class="form-control" value="<?= set_value('email'); ?>" id="email" name="email">
+                                    <label for="email">Email </label>
+                                    <input type="email" class="form-control" value="<?= set_value('email'); ?>" id="email" name="email" autocomplete="off">
                                 </div>
+                                <div class="form-group <?= form_error('role') ? 'has-error' : ''; ?>">
+                                    <label for="role">Role *</label>
+                                    <select class="form-control" id="role" name="role">
+                                        <option value="">--Pilih--</option>
+                                        <?php foreach ($roles as $role) : ?>
+                                            <option value="<?= $role['id_role']; ?>" <?= set_value('role') == $role['id_role'] ? 'selected' : ''; ?>><?= $role['role']; ?></option>
+                                        <?php endforeach ?>
+                                    </select>
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-md-6">
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <div>
+                                        <label for="site">Site *</label>
+                                    </div>
+                                    <div class="form-group input-group <?= form_error('site') ? 'has-error' : ''; ?>">
+                                        <input type="hidden" class="form-control" id="id_site" name="id_site" value="<?= set_value('id_site'); ?>">
+                                        <input type="text" class="form-control" id="site" name="site" value="<?= set_value('email'); ?>" autocomplete="off">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-site">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                <?php endif ?>
                                 <div class="form-group <?= form_error('password1') ? 'has-error' : ''; ?>">
                                     <label for="password1">Password * </label>
                                     <input type="password" class="form-control" value="" id="password1" name="password1">
@@ -40,32 +76,14 @@
                                     <label for="password2">Confirm Password * </label>
                                     <input type="password" class="form-control" value="" id="password2" name="password2">
                                 </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <div>
-                                    <label for="site">Site *</label>
-                                </div>
-                                <div class="form-group input-group <?= form_error('site') ? 'has-error' : ''; ?>">
-                                    <input type="hidden" class="form-control" id="site_id" name="site_id">
-                                    <input type="text" class="form-control" id="site" name="site">
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-site">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
-                                </div>
-                                <div class="form-group <?= form_error('role') ? 'has-error' : ''; ?>">
-                                    <label for="role">Role *</label>
-                                    <select class="form-control" id="role" name="role">
-                                        <option value="">--Pilih--</option>
-                                        <option value="6">Admin</option>
-                                        <option value="7">Operational</option>
-                                        <option value="8">Danru</option>
-                                        <option value="4">Client</option>
+                                <div class="form-group <?= form_error('status') ? 'has-error' : ''; ?>">
+                                    <label for="status">Status *</label>
+                                    <select class="form-control" id="status" name="status" <?= set_value('status'); ?>>
+                                        <option value="1" selected>Aktif</option>
+                                        <option value="0">Tidak Aktif</option>
                                     </select>
                                 </div>
+
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -112,9 +130,9 @@
                         foreach ($sites as $site) : ?>
                             <tr>
                                 <td><?= $n++ ?></td>
-                                <td style="width: 80%;"><?= $site['site']; ?> <small><i>(<?= $site['site_id']; ?>)</i></small></td>
+                                <td style="width: 80%;"><?= $site['site']; ?> <small><i>(<?= $site['id_site']; ?>)</i></small></td>
                                 <td>
-                                    <button class="btn btn-xs btn-info" id="selectSite" data-id="<?= $site['site_id']; ?>" data-site="<?= $site['site']; ?>"><i class=" fa fa-check"></i> Select</button>
+                                    <button class="btn btn-xs btn-info" id="selectSite" data-id="<?= $site['id_site']; ?>" data-site="<?= $site['site']; ?>"><i class=" fa fa-check"></i> Select</button>
                                 </td>
                             </tr>
                         <?php endforeach ?>
@@ -129,9 +147,9 @@
 <script>
     $(document).ready(function() {
         $(document).on('click', '#selectSite', function() {
-            var site_id = $(this).data('id');
+            var id_site = $(this).data('id');
             var site = $(this).data('site');
-            $('#site_id').val(site_id);
+            $('#id_site').val(id_site);
             $('#site').val(site);
             $('#modal-site').modal('hide');
         })

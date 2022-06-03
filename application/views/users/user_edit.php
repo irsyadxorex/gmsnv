@@ -22,51 +22,68 @@
                 <div class="box-body">
                     <?= $this->session->flashdata('message'); ?>
                     <div class="row">
-                        <form action="" method="post">
+                        <form action="" method="post" enctype="multipart/form-data">
                             <div class="col-md-6">
-                                <input type="hidden" class="form-control" id="user_id" name="user_id" value="<?= $user['id']; ?>">
                                 <div class="form-group <?= form_error('name') ? 'has-error' : ''; ?>">
-                                    <label for="name">Name * </label>
-                                    <input type="text" class="form-control" value="<?= $user['name'] ?>" id="name" name="name">
+                                    <label for="nama">Name * </label>
+                                    <input type="text" class="form-control" value="<?= $user['nama']; ?>" id="nama" name="nama">
+                                </div>
+                                <div class="form-group <?= form_error('username') ? 'has-error' : ''; ?>">
+                                    <label for="text">Username * </label>
+                                    <input type="text" class="form-control" value="<?= $user['username']; ?>" id="username" name="username" readonly>
+                                </div>
+                                <div class="form-group <?= form_error('telephone') ? 'has-error' : ''; ?>">
+                                    <label for="telephone">Telephone *</label>
+                                    <input type="number" class="form-control" value="<?= $user['telephone']; ?>" id="telephone" name="telephone">
                                 </div>
                                 <div class="form-group <?= form_error('email') ? 'has-error' : ''; ?>">
-                                    <label for="email">Email * </label>
-                                    <input type="text" class="form-control" value="<?= $user['email']; ?>" id="email" name="email" readonly>
-                                </div>
-                                <div class="form-group <?= form_error('password1') ? 'has-error' : ''; ?>">
-                                    <label for="password1">Reset Password * </label>
-                                    <input type="password" class="form-control" value="" id="password1" name="password1">
-                                </div>
-                                <div class="form-group <?= form_error('password2') ? 'has-error' : ''; ?>">
-                                    <label for="password2">Reset Confirm Password * </label>
-                                    <input type="password" class="form-control" value="" id="password2" name="password2">
-                                </div>
-
-                            </div>
-
-                            <div class="col-md-6">
-                                <div>
-                                    <label for="site">Site *</label>
-                                </div>
-                                <div class="form-group input-group <?= form_error('site') ? 'has-error' : ''; ?>">
-                                    <input type="hidden" class="form-control" id="site_id" name="site_id">
-                                    <input type="text" class="form-control" id="site" name="site" value="<?= $user['id_site'] == 0 ? '' : $user['site']; ?>" readonly>
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-site">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
+                                    <label for="email">Email </label>
+                                    <input type="email" class="form-control" value="<?= $user['email']; ?>" id="email" name="email" autocomplete="off">
                                 </div>
                                 <div class="form-group <?= form_error('role') ? 'has-error' : ''; ?>">
                                     <label for="role">Role *</label>
                                     <select class="form-control" id="role" name="role">
                                         <option value="">--Pilih--</option>
-                                        <option value="6" <?= $user['id_role'] == 6 ? 'selected' : '' ?>>Admin</option>
-                                        <option value="7" <?= $user['id_role'] == 7 ? 'selected' : '' ?>>Operational</option>
-                                        <option value="8" <?= $user['id_role'] == 8 ? 'selected' : '' ?>>Danru</option>
-                                        <option value="4" <?= $user['id_role'] == 4 ? 'selected' : '' ?>>Client</option>
+                                        <?php foreach ($roles as $role) : ?>
+                                            <option value="<?= $role['id_role']; ?>" <?= $role['id_role'] == $user['id_role'] ? 'selected' : ''; ?>><?= $role['role']; ?></option>
+                                        <?php endforeach ?>
                                     </select>
                                 </div>
+
+
+                            </div>
+
+                            <div class="col-md-6">
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <div>
+                                        <label for="site">Site *</label>
+                                    </div>
+                                    <div class="form-group input-group <?= form_error('site') ? 'has-error' : ''; ?>">
+                                        <input type="hidden" class="form-control" id="id_site" name="id_site">
+                                        <input type="text" class="form-control" id="site" name="site" value="<?= $user['site']; ?>" disabled>
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-site">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                <?php endif ?>
+                                <div class="form-group <?= form_error('password1') ? 'has-error' : ''; ?>">
+                                    <label for="password1">Password * </label>
+                                    <input type="password" class="form-control" value="" id="password1" name="password1">
+                                </div>
+                                <div class="form-group <?= form_error('password2') ? 'has-error' : ''; ?>">
+                                    <label for="password2">Confirm Password * </label>
+                                    <input type="password" class="form-control" value="" id="password2" name="password2">
+                                </div>
+                                <div class="form-group <?= form_error('status') ? 'has-error' : ''; ?>">
+                                    <label for="status">Status *</label>
+                                    <select class="form-control" id="status" name="status">
+                                        <option value="1" <?= $user['status'] == 1 ? 'selected' : ''; ?>>Aktif</option>
+                                        <option value="0" <?= $user['status'] == 0 ? 'selected' : ''; ?>>Tidak Aktif</option>
+                                    </select>
+                                </div>
+
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -113,9 +130,9 @@
                         foreach ($sites as $site) : ?>
                             <tr>
                                 <td><?= $n++ ?></td>
-                                <td style="width: 80%;"><?= $site['site']; ?> <small><i>(<?= $site['site_id']; ?>)</i></small></td>
+                                <td style="width: 80%;"><?= $site['site']; ?> <small><i>(<?= $site['id_site']; ?>)</i></small></td>
                                 <td>
-                                    <button class="btn btn-xs btn-info" id="selectSite" data-id="<?= $site['site_id']; ?>" data-site="<?= $site['site']; ?>"><i class=" fa fa-check"></i> Select</button>
+                                    <button class="btn btn-xs btn-info" id="selectSite" data-id="<?= $site['id_site']; ?>" data-site="<?= $site['site']; ?>"><i class=" fa fa-check"></i> Select</button>
                                 </td>
                             </tr>
                         <?php endforeach ?>

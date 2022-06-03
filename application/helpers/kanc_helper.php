@@ -3,7 +3,7 @@
 function is_logged_in()
 {
     $ci = get_instance();
-    $user_session = $ci->session->userdata('email');
+    $user_session = $ci->session->userdata('username');
     if (!$user_session) {
         redirect('auth');
     }
@@ -60,4 +60,23 @@ function indo_time($time)
     $i = substr($time, 14, 2);
     // $s = substr($time, 17, 2);
     return $h . ':' . $i;
+}
+function indo_sort_time($time)
+{
+    $h = substr($time, 0, 2);
+    $i = substr($time, 3, 2);
+    // $s = substr($time, 17, 2);
+    return $h . ':' . $i;
+}
+
+function randomString($length = 20)
+{
+    $str = "";
+    $characters = array_merge(range('A', 'Z'), range('a', 'z'), range('0', '9'));
+    $max = count($characters) - 1;
+    for ($i = 0; $i < $length; $i++) {
+        $rand = mt_rand(0, $max);
+        $str  .= $characters[$rand];
+    }
+    return $str;
 }

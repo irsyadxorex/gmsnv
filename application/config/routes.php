@@ -54,13 +54,14 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 $route['report/incident/upload'] = 'incident/add';
-$route['report/incident'] = 'incident/report';
+$route['report/incident/update/(:num)'] = 'incident/edit/$1';
+$route['report/incident'] = 'incident';
 
 $route['report/checkpoint'] = 'checkpoint/report';
-$route['report/checkpoint/export_pdf'] = 'checkpoint/export_pdf';
+$route['report/checkpoint/process'] = 'checkpoint/process';
 
 $route['report/activity'] = 'activity/report';
-$route['report/activity/export_pdf'] = 'activity/export_pdf';
+$route['report/activity/process'] = 'activity/process';
 
 $route['report/attendance'] = 'attendance/report';
 $route['report/attendance/export'] = 'attendance/export';

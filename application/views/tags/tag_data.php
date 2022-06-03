@@ -21,15 +21,19 @@
                 <!-- /.box-header -->
                 <div class="box-body">
                     <?= $this->session->flashdata('message'); ?>
-                    <table class="table table-striped table-bordered table-hover" id="listTable">
+                    <table class="table table-striped table-bordered table-hover" id="list">
                         <thead>
                             <tr>
                                 <th class="text-center" width="10px">No</th>
-                                <th class="text-center" width="200px">ID</th>
-                                <th class="text-center" width="">Site</th>
+                                <th class="text-center" width="200px">QR</th>
+                                <th class="text-center" width="150">Is Tag</th>
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <th class="text-center" width="">Site</th>
+                                <?php endif ?>
                                 <th class="text-center" width="">Label</th>
-                                <th class="text-center" width="30px">Active</th>
-                                <th class="text-center" width="">Opsi</th>
+                                <th class="text-center" width="">Lokasi</th>
+                                <th class="text-center" width="50px">Active</th>
+                                <th class="text-center" width="200">Opsi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,19 +42,24 @@
                             foreach ($tags as $tag) : ?>
                                 <tr>
                                     <td class="text-center"><?= $n++; ?></td>
-                                    <td class="text-center"><?= $tag['tagid']; ?></td>
-                                    <td><?= $tag['site']; ?></td>
+                                    <td class="text-center"><?= $tag['tagid']; ?> </td>
+                                    <td class="text-center"><?= $tag['is_tag'] == 1 ? '<span class="label label-warning">patroli</span>' : '<span class="label label-info">absen</i></span>'; ?> </td>
+                                    <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                        <td><?= $tag['site']; ?></td>
+                                    <?php endif ?>
                                     <td><?= $tag['label'] ?> </td>
-                                    <td class="text-center"><?= $tag['is_active'] == 1 ? '<span class="text-success"><i class="fa fa-check"></i></span>' : '<span class="text-danger"><i class="fa fa-ban"></i></span>';; ?> </td>
+                                    <td><?= $tag['lokasi'] ?> </td>
+                                    <td class="text-center"><?= $tag['status_tag'] !=  0 ? '<span class="text-success"><i class="fa fa-check"></i></span>' : '<span class="text-danger"><i class="fa fa-ban"></i></span>'; ?> </td>
                                     <td class="text-center">
-                                        <?php if ($tag['is_active'] == 1) {
+                                        <?php if ($tag['status'] == 1) {
                                             $status  = 'Aktif';
                                         } else {
                                             $status =  'Tidak Aktif';
                                         }
                                         ?>
-                                        <a id="set_detail" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#modal-detail" data-tagid="<?= $tag['tagid']; ?>" data-site="<?= $tag['site']; ?>" data-label="<?= $tag['label']; ?>" data-location="<?= $tag['location']; ?>" data-status="<?= $status; ?>"><i class="fa fa-eye"></i> Detail</a>
-                                        <a href="<?= base_url('tag/edit/') . $tag['nfcid']; ?>" class="btn btn-xs btn-warning"><i class="fa fa-cog"></i> Update</a>
+                                        <a href="<?= base_url('tag/print/') . $tag['tagid']; ?>" class="btn btn-xs btn-info"> <i class="fa fa-qrcode"></i> Print</a>
+                                        <a id="set_detail" class="btn btn-xs btn-primary" data-toggle="modal" data-target="#modal-detail" data-qrcode="<?= $tag['tagid']; ?>" data-site="<?= $tag['site']; ?>" data-label="<?= $tag['label']; ?>" data-location="<?= $tag['lokasi']; ?>" data-status="<?= $tag['status_tag'] != 0 ? 'aktif' : 'tidak aktif'; ?>" data-latitude_longitude="<?= $tag['latitude_longitude']; ?>"><i class="fa fa-eye"></i> Detail</a>
+                                        <a href="<?= base_url('tag/edit/') . $tag['id_qrcode']; ?>" class="btn btn-xs btn-warning"><i class="fa fa-cog"></i> Update</a>
                                     </td>
                                 </tr>
                             <?php endforeach ?>
@@ -83,8 +92,8 @@
                 <table class="table table-bordered no-margin">
                     <tbody>
                         <tr>
-                            <th>Tag ID</th>
-                            <td><span id="tagid"></span></td>
+                            <th>QrCode</th>
+                            <td><img src="" id="qrcode"></img></td>
                         </tr>
                         <tr>
                             <th>Site</th>
@@ -99,11 +108,21 @@
                             <td><span id="location"></span></td>
                         </tr>
                         <tr>
+                            <th>Latitude Longitude</th>
+                            <td><span id="latitude_longitude"></span></td>
+                        </tr>
+                        <tr>
                             <th>Status</th>
                             <td>
                                 <span class="label label-default" id="status"></span>
                             </td>
                         </tr>
+                        <!-- <tr>
+                            <th>GPS</th>
+                            <td>
+                                <span class="label label-default" id="gps"></span>
+                            </td>
+                        </tr> -->
 
                         <!-- <tr>
                             <th>Action</th>
@@ -122,16 +141,19 @@
 <script>
     $(document).ready(function() {
         $(document).on('click', '#set_detail', function() {
-            var tagid = $(this).data('tagid');
+            var qrcode = $(this).data('qrcode');
             var site = $(this).data('site');
             var label = $(this).data('label');
             var location = $(this).data('location');
             var status = $(this).data('status');
-            $('#tagid').text(tagid);
+            var latitude_longitude = $(this).data('latitude_longitude');
+            $('#qrcode').text(qrcode);
             $('#site').text(site);
             $('#label').text(label);
             $('#location').text(location);
+            $('#latitude_longitude').text(latitude_longitude);
             $('#status').text(status);
+            $('#qrcode').attr("src", "<?= site_url('assets/qrcode/') ?>" + qrcode + ".png");
         })
     })
 </script>

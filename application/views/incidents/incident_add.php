@@ -16,20 +16,20 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Form </h3>
-                    <!-- <a href="#" class="btn btn-primary pull-right"><i class="fa fa-upload"></i> Upload Report</a> -->
+                    <a href="<?= base_url('report/incident'); ?>" class="btn btn-warning pull-right"><i class="fa fa-undo"></i> Back</a>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
                     <?= $this->session->flashdata('message'); ?>
                     <div class="row">
-                        <form action="<?= base_url('incident/process_add'); ?>" method="post" enctype="multipart/form-data">
+                        <form action="<?= base_url('incident/add'); ?>" method="post" enctype="multipart/form-data">
                             <div class="col-md-6">
                                 <div>
                                     <label for="site">Site *</label>
                                 </div>
                                 <div class="form-group input-group <?= form_error('site') ? 'has-error' : ''; ?>">
                                     <input type="hidden" class="form-control" id="site_id" name="site_id">
-                                    <input type="text" class="form-control" id="site" name="site" required>
+                                    <input type="text" class="form-control" id="site" name="site">
                                     <span class="input-group-btn">
                                         <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-site">
                                             <i class="fa fa-search"></i>
@@ -42,11 +42,11 @@
                                 </div>
                                 <div class="form-group <?= form_error('subject') ? 'has-error' : ''; ?>">
                                     <label for="subject">Subject </label>
-                                    <input type="text" class="form-control" value="<?= set_value('subject'); ?>" id="subject" name="subject" required>
+                                    <input type="text" class="form-control" value="<?= set_value('subject'); ?>" id="subject" name="subject">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group <?= form_error('fileIncident') ? 'has-error' : ''; ?>">
                                     <label for="exampleInputFile">File input </label>
-                                    <input type="file" name="fileIncident" id="exampleInputFile" required>
+                                    <input type="file" name="fileIncident" id="exampleInputFile">
 
                                     <p class="help-block"><i>format .doc .docx .odt .pdf</i> </p>
                                 </div>
@@ -75,7 +75,7 @@
                                 </div>
                                 <div class="form-group <?= form_error('status') ? 'has-error' : ''; ?>">
                                     <label for="status">Status *</label>
-                                    <select class="form-control" id="status" name="status" required>
+                                    <select class="form-control" id="status" name="status">
                                         <option value="">--Pilih--</option>
                                         <option value="1">Draft</option>
                                         <option value="2">Review</option>

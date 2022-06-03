@@ -1,7 +1,7 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        <?= $title; ?>s
+        <?= $title; ?>
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Dashboard</a></li>
@@ -23,40 +23,55 @@
                     <div class="row">
                         <form action="" method="post">
                             <div class="col-md-6">
-                                <div>
-                                    <label for="site">Site *</label>
-                                </div>
-                                <div class="form-group input-group <?= form_error('site') ? 'has-error' : ''; ?>">
-                                    <input type="hidden" class="form-control" id="site_id" name="site_id">
-                                    <input type="text" class="form-control" id="site" name="site" readonly>
-                                    <span class="input-group-btn">
-                                        <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-site">
-                                            <i class="fa fa-search"></i>
-                                        </button>
-                                    </span>
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <div>
+                                        <label for="site">Site *</label>
+                                    </div>
+                                    <div class="form-group input-group <?= form_error('site') ? 'has-error' : ''; ?>">
+                                        <input type="hidden" class="form-control" id="id_site" name="id_site">
+                                        <input type="text" class="form-control" id="site" name="site">
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#modal-site">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </span>
+                                    </div>
+                                <?php endif ?>
+
+                                <div class="form-group <?= form_error('label') ? 'has-error' : ''; ?>">
+                                    <label for="label">Label *</label><small> (cth: checkpoint 1 / attendance 1)</small>
+                                    <input class="form-control" type="label" id="label" name="label" value="<?= set_value('label'); ?>" autofocus>
                                 </div>
                                 <div class="form-group">
-                                    <label for="label">Label *</label>
-                                    <input class="form-control" type="label" id="label" name="label" value="<?= set_value('label'); ?>">
-                                </div>
-                                <div class="form-group">
-                                    <label for="location">Location</label>
+                                    <label for="location">Location</label><small> (cth: Pos / lobby)</small>
                                     <textarea type="text" class="form-control" id="location" name="location" style="height: 150px;"><?= set_value('location'); ?></textarea>
                                 </div>
 
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="idtag">Tag ID</label>
-                                    <input class="form-control" type="idtag" id="idtag" name="idtag" value="<?= set_value('tagid'); ?>" readonly>
+                                <div class="form-group ">
+                                    <label for="qrcode">QrCode</label>
+                                    <input class="form-control" type="qrcode" id="qrcode" name="qrcode" value="<?= $kode; ?>" readonly>
+                                </div>
+                                <div class="form-group ">
+                                    <label for="latitude_longitude">Latitude, Longitude</label>
+                                    <input class="form-control" type="latitude_longitude" id="latitude_longitude" name="latitude_longitude" value="">
                                 </div>
 
 
+                                <div class="form-group <?= form_error('is_tag') ? 'has-error' : ''; ?>">
+                                    <label for="is_tag">Jenis Tag *</label>
+                                    <select class="form-control" id="is_tag" name="is_tag">
+                                        <option value="">-- Pilih Tag --</option>
+                                        <option value="1" <?= set_value('is_tag') == 1 ? 'selected' : ''; ?>>Patroli</option>
+                                        <option value="2" <?= set_value('is_tag') == 2 ? 'selected' : ''; ?>>Absensi</option>
+                                    </select>
+                                </div>
                                 <div class="form-group ">
                                     <label for="status">Status *</label>
                                     <select class="form-control" id="status" name="status">
-                                        <option value="1">Aktif</option>
-                                        <option value="0" selected>Tidak Aktif</option>
+                                        <option value="1" selected>Aktif</option>
+                                        <option value="0">Tidak Aktif</option>
                                     </select>
                                 </div>
 
@@ -104,9 +119,9 @@
                         foreach ($sites as $site) : ?>
                             <tr>
                                 <td><?= $n++ ?></td>
-                                <td style="width: 80%;"><?= $site['site']; ?> <small><i>(<?= $site['site_id']; ?>)</i></small></td>
+                                <td style="width: 80%;"><?= $site['site']; ?> <small><i>(<?= $site['id_site']; ?>)</i></small></td>
                                 <td>
-                                    <button class="btn btn-xs btn-info" id="selectSite" data-id="<?= $site['site_id']; ?>" data-site="<?= $site['site']; ?>"><i class=" fa fa-check"></i> Select</button>
+                                    <button class="btn btn-xs btn-info" id="selectSite" data-id="<?= $site['id_site']; ?>" data-site="<?= $site['site']; ?>"><i class=" fa fa-check"></i> Select</button>
                                 </td>
                             </tr>
                         <?php endforeach ?>
@@ -121,9 +136,9 @@
 <script>
     $(document).ready(function() {
         $(document).on('click', '#selectSite', function() {
-            var site_id = $(this).data('id');
+            var id_site = $(this).data('id');
             var site = $(this).data('site');
-            $('#site_id').val(site_id);
+            $('#id_site').val(id_site);
             $('#site').val(site);
             $('#modal-site').modal('hide');
         })

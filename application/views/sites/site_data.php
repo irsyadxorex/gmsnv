@@ -39,7 +39,7 @@
                                         <?= $site['gms_status'] == 1 ? '<span class="text-success"><i class="fa fa-check"></i></span>' : '<span class="text-danger"><i class="fa fa-ban"></i></span>'; ?>
                                     </td>
                                     <td class="text-center">
-                                        <a href="" class="label label-warning"><i class="fa fa-cog"></i> Update</a>
+                                        <a href="<?= base_url('site/update/') . $site['site_id']; ?>" class="label label-warning"><i class="fa fa-cog"></i> Update</a>
                                     </td>
                                 </tr>
                             <?php endforeach ?>

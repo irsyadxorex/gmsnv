@@ -25,41 +25,44 @@
                         <thead>
                             <tr>
                                 <th class="text-center" width="10px">No</th>
-                                <th class="text-center" width="">Name</th>
-                                <th class="text-center" width="300">Email</th>
+                                <th class="text-center" width="200">Name</th>
+                                <th class="text-center" width="200">Username</th>
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <th class="text-center" width="200">Site</th>
+                                <?php endif ?>
                                 <th class="text-center" width="100px">Role</th>
-                                <th class="text-center" width="300px">Site</th>
-                                <th class="text-center" width="150px">Opsi</th>
+                                <th class="text-center" width="50px">Opsi</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             $n = 1;
                             foreach ($users as $user) : ?>
-                                <?php if ($user['id_role'] == 4 || $user['id_role'] == 6 || $user['id_role'] == 7 || $user['id_role'] == 8) : ?>
-                                    <tr>
-                                        <td class="text-center"><?= $n++; ?></td>
-                                        <td><?= $user['name']; ?></td>
-                                        <td><?= $user['email']; ?></td>
-                                        <?php if ($user['id_role'] == 6) : ?>
-                                            <td class="text-center"><span class="label label-default">Admin</span></td>
-                                        <?php elseif ($user['id_role'] == 7) : ?>
-                                            <td class="text-center"><span class="label label-primary">Operational</span></td>
-                                        <?php elseif ($user['id_role'] == 8) : ?>
-                                            <td class="text-center"><span class="label bg-orange">Danru</span></td>
-                                        <?php elseif ($user['id_role'] == 4) : ?>
-                                            <td class="text-center"><span class="label bg-teal">Client</span></td>
-                                        <?php endif ?>
-                                        <td class="text-center"><?= $user['site'] == null ? 'ALL' : $user['site']; ?></td>
-                                        <td class="text-center">
-                                            <form action="<?= base_url('user/delete'); ?>" method="post">
-                                                <a href="<?= base_url('user/edit/') . $user['id']; ?>" class="label label-warning"><i class="fa fa-cog"></i> Update</a>
-                                                <input type="hidden" name="user_id" value="<?= $user['id']; ?>">
-                                                <button onclick="return confirm('Apakah anda yakin?')" type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                <?php endif; ?>
+                                <tr>
+                                    <td class="text-center"><?= $n++; ?></td>
+                                    <td><?= $user['nama']; ?></td>
+                                    <td><?= $user['username']; ?></td>
+                                    <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                        <td><?= $user['site']; ?></td>
+                                    <?php endif ?>
+                                    <?php if ($user['id_role'] == 1) : ?>
+                                        <td class="text-center"><span class="label label-default">Super Admin</span></td>
+                                    <?php elseif ($user['id_role'] == 2) : ?>
+                                        <td class="text-center"><span class="label label-primary">Admin Site</span></td>
+                                    <?php elseif ($user['id_role'] == 3) : ?>
+                                        <td class="text-center"><span class="label bg-orange">Manager</span></td>
+                                    <?php elseif ($user['id_role'] == 4) : ?>
+                                        <td class="text-center"><span class="label bg-teal">Pengawas</span></td>
+                                    <?php endif ?>
+
+                                    <td class="text-center">
+                                        <form action="<?= base_url('user/delete'); ?>" method="post">
+                                            <a href="<?= base_url('user/edit/') . $user['username']; ?>" class="label label-warning"><i class="fa fa-cog"></i> Update</a>
+                                            <input type="hidden" name="username" value="<?= $user['username']; ?>">
+                                            <button onclick="return confirm('Apakah anda yakin?')" type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
                             <?php endforeach ?>
                         </tbody>
 

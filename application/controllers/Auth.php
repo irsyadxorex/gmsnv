@@ -6,13 +6,13 @@ class Auth extends CI_Controller
 
     public function index()
     {
-        if ($this->session->userdata('email')) {
+        if ($this->session->userdata('username')) {
             // $user = $this->db->get_where('admin_users', ['email' => $this->session->userdata('email')])->row_array();
             // $role = $this->db->get_where('roles', ['role_id' => $user['id_role']])->row('role');
             // redirect($role);
             redirect('dashboard');
         }
-        $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
+        $this->form_validation->set_rules('username', 'Username', 'trim|required');
         $this->form_validation->set_rules('password', 'Password', 'trim|required');
         if ($this->form_validation->run() == false) {
             $this->load->view('auth/login');
@@ -23,59 +23,46 @@ class Auth extends CI_Controller
 
     private function _login()
     {
-        $email = $this->input->post('email');
+        $username = $this->input->post('username');
         $password = $this->input->post('password');
 
-        $user = $this->db->get_where('admin_users', ['email' => $email])->row_array();
+        $user = $this->db->get_where('users', ['username' => $username])->row_array();
 
         if ($user) {
-            if (password_verify($password, $user['password'])) {
-                $data = [
-                    'email' => $user['email'],
-                    'id_role' => $user['id_role'],
-                    'id_area' => $user['id_area'],
-                    'id_site' => $user['id_site'],
-                    'name' => $user['name']
-                ];
-                $this->session->set_userdata($data);
-                // redirect('dashboard');
-                if ($user['id_role'] == 1) {
-                    // redirect('admin');
-                    redirect('auth/blocked');
-                } elseif ($user['id_role'] == 2) {
-                    // redirect('hrd');
-                    redirect('Dashboard');
-                } elseif ($user['id_role'] == 3) {
-                    // redirect('employee');
-                    redirect('auth/blocked');
-                } elseif ($user['id_role'] == 4) {
-                    // client
-                    redirect('checkpoint');
-                } elseif ($user['id_role'] == 5) {
-                    // redirect('operation');
-                    redirect('auth/blocked');
-                } elseif ($user['id_role'] == 6) {
-                    //admin
-                    redirect('Dashboard');
-                } elseif ($user['id_role'] == 7) {
-                    //ops
-                    redirect('Dashboard');
-                } elseif ($user['id_role'] == 8) {
-                    //danru
-                    redirect('Dashboard');
+            if ($user['status'] == 1) {
+                if (password_verify($password, $user['password'])) {
+                    $data = [
+                        'username' => $user['username'],
+                        'email' => $user['email'],
+                        'id_site' => $user['id_site'],
+                        'id_role' => $user['id_role'],
+                        'id_position' => $user['id_position'],
+                        'nama' => $user['nama']
+                    ];
+                    // var_dump($data);
+                    // die;
+                    $this->session->set_userdata($data);
+                    if ($user['id_role'] == 1) {
+                        redirect('dashboard');
+                    } elseif ($user['id_role'] == 2) {
+                        redirect('dashboard');
+                    } else {
+                        redirect('auth/blocked');
+                    }
                 } else {
-                    // redirect('client');
-                    redirect('auth/blocked');
-                }
-            } else {
-                $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                    $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
                     Password salah!
                     </div>');
-                redirect('auth');
+                    redirect('auth');
+                }
             }
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
+                    User tidak aktif!
+                    </div>');
+            redirect('auth');
         } else {
             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">
-                    Email tidak terdaftar!
+                    Username tidak terdaftar!
                     </div>');
             redirect('auth');
         }

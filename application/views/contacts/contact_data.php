@@ -16,18 +16,24 @@
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title"><?= $title; ?> List</h3>
-                    <a href="#" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Tambah</a>
+                    <a href="<?= base_url('contact/add'); ?>" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Tambah</a>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
+                    <?= $this->session->flashdata('message'); ?>
                     <table class="table table-striped table-bordered table-hover" id="listTable">
                         <thead>
                             <tr>
                                 <th class="text-center" width="10px">No</th>
-                                <th class="text-center" width="200">Service</th>
+                                <th class="text-center" width="80px">Service</th>
                                 <th class="text-center" width="">Nama</th>
                                 <th class="text-center" width="">Phone</th>
-                                <th class="text-center" width="100">Opsi</th>
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <th class="text-center" width="">Site</th>
+                                <?php endif ?>
+                                <th class="text-center" width="">Wilayah</th>
+                                <th class="text-center" width="10px">Maps</th>
+                                <th class="text-center" width="200px">Opsi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -37,8 +43,13 @@
                                 <tr>
                                     <td class="text-center"><?= $n++; ?></td>
                                     <td><?= $contact['service']; ?></td>
-                                    <td><?= $contact['name']; ?></td>
-                                    <td><?= $contact['phone'] ?> </td>
+                                    <td><?= $contact['nama']; ?></td>
+                                    <td><?= $contact['telephone'] ?> </td>
+                                    <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                        <td><?= $contact['site'] ?> </td>
+                                    <?php endif ?>
+                                    <td><?= $contact['area'] ?> </td>
+                                    <td class="text-center"> <a href="<?= $contact['maps'] ?>" target="_blank"><i class="fa fa-map-o"></i> </a></td>
                                     <td class="text-center">
                                         <a href="#" class="btn btn-xs btn-warning"><i class="fa fa-cog"></i> Update</a>
                                         <a href="#" class="btn btn-xs btn-danger"><i class="fa fa-trash"></i> Delete</a>

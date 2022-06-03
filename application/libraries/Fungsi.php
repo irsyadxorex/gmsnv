@@ -12,14 +12,14 @@ class Fungsi
 
     function user_login()
     {
-        $email = $this->ci->session->userdata('email');
-        $user_data = $this->ci->db->get_where('admin_users', ['email' => $email])->row();
+        $username = $this->ci->session->userdata('username');
+        $user_data = $this->ci->db->get_where('users', ['username' => $username])->row();
         return $user_data;
     }
 
     function danru_login()
     {
-        $email = $this->ci->session->userdata('email');
+        $email = $this->ci->session->userdata('username');
         $danru_data = $this->ci->db->query("select * from employee_users eu , employees e WHERE eu.nik = e.nik and eu.email = '$email' ;")->row();
         // $danru_data = $this->ci->db->get_where('employee_users', ['email' => $email])->row();
         return $danru_data;

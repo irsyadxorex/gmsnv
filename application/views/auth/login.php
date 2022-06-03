@@ -40,9 +40,9 @@
             <?= $this->session->flashdata('message'); ?>
             <form action="<?= base_url('auth/index') ?>" method="post">
                 <div class="form-group has-feedback">
-                    <input type="email" name="email" id="email" class="form-control" placeholder="Email">
+                    <input type="text" name="username" id="username" class="form-control" placeholder="username">
                     <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
-                    <?= form_error('email', '<small class="text-danger pl-3">', '</small>'); ?>
+                    <?= form_error('username', '<small class="text-danger pl-3">', '</small>'); ?>
                 </div>
                 <div class="form-group has-feedback">
                     <input type="password" name="password" id="password" class="form-control" placeholder="Password">

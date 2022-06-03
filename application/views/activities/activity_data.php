@@ -19,34 +19,22 @@
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
-                    <table class="table table-striped table-bordered table-hover" id="dataActivity">
+                    <table class="table table-striped table-bordered table-hover" id="dataactivity">
                         <thead>
                             <tr>
                                 <th class="text-center" width="10px">No</th>
                                 <th class="text-center" width="60px">Tanggal</th>
                                 <th class="text-center" width="30px">Jam</th>
-                                <th class="text-center" width="200px">Site</th>
-                                <th class="text-center" width="200px">Anggota</th>
+                                <?php if ($this->session->userdata('id_site') == 0) : ?>
+                                    <th class="text-center" width="100px">Site</th>
+                                <?php endif ?>
+                                <th class="text-center" width="100px">Anggota</th>
                                 <th class="text-center" width="300px">Kegiatan</th>
                                 <th class="text-center" width="30px">Opsi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            $n = 1;
-                            foreach ($activities as $activity) : ?>
-                                <tr>
-                                    <td class="text-center"><?= $n++; ?></td>
-                                    <td class="text-center"><?= indo_date($activity['date_time']); ?></td>
-                                    <td class="text-center"><?= indo_time($activity['date_time']); ?></td>
-                                    <td><?= $activity['site']; ?></td>
-                                    <td><?= $activity['name']; ?></td>
-                                    <td><?= $activity['activity']; ?></td>
-                                    <td class="text-center">
-                                        <a href="" id="set_detail" class="badge badge-sm bg-green" data-toggle="modal" data-target="#modal-activity" data-anggota="<?= $activity['name']; ?>" data-kegiatan="<?= $activity['activity']; ?>" data-images="<?= $activity['images']; ?>"><i class="fa fa-eye"></i> view</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach ?>
+
                         </tbody>
 
                     </table>
@@ -63,7 +51,7 @@
 </section>
 <!-- /.content -->
 
-<div class="modal fade" id="modal-activity">
+<div class="modal fade" id="modal-detail">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -75,15 +63,19 @@
                 <table class="table table-bordered no-margin">
                     <tbody>
                         <tr>
-                            <th class="text-center">Anggota</th>
-                            <td><span id="anggota"></span></td>
+                            <th class="">Personil</th>
+                            <td><span id="nama"></span></td>
                         </tr>
                         <tr>
-                            <th class="text-center">Kegiatan</th>
+                            <th class="">Site</th>
+                            <td><span id="site"></span></td>
+                        </tr>
+                        <tr>
+                            <th class="">Kegiatan</th>
                             <td><span id="activity"></span></td>
                         </tr>
                         <tr>
-                            <th class="text-center">Dokumentasi</th>
+                            <th class="">Dokumentasi</th>
                             <!-- <td><span id="images"></span></th> -->
                             <td><img src="" width="200px" id="images"></img></td>
                         </tr>
@@ -102,14 +94,42 @@
 </div>
 <!-- /.modal -->
 
+
+
 <script>
     $(document).ready(function() {
+        $('#dataactivity').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "<?= site_url('activity/get_ajax') ?>",
+                "type": "POST"
+            },
+
+            "columnDefs": [{
+                "targets": [0, 1, 2, -1],
+                "className": 'text-center ',
+            }, {
+                "targets": [0, -1, -2],
+                "orderable": false,
+            }, ],
+            "order": [],
+            "lengthMenu": [
+                [15, 30, 50, 100, -1],
+                [15, 30, 50, 100, "All"]
+            ]
+        });
+    });
+
+    $(document).ready(function() {
         $(document).on('click', '#set_detail', function() {
-            var anggota = $(this).data('anggota');
-            var kegiatan = $(this).data('kegiatan');
+            var nama = $(this).data('nama');
+            var activity = $(this).data('activity');
+            var site = $(this).data('site');
             var images = $(this).data('images');
-            $('#anggota').text(anggota);
-            $('#activity').text(kegiatan);
+            $('#nama').text(nama);
+            $('#activity').text(activity);
+            $('#site').text(site);
             // $('#images').text(images);
             $('#images').attr("src", "https://hris.tpm-facility.com/assets/imagesofgms/activities/" + images);
         })
