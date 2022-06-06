@@ -63,7 +63,7 @@ $route['report/checkpoint/process'] = 'checkpoint/process';
 $route['report/activity'] = 'activity/report';
 $route['report/activity/process'] = 'activity/process';
 
-$route['report/attendance'] = 'attendance/report';
-$route['report/attendance/export'] = 'attendance/export';
+$route['report/attendances'] = 'attendances/report';
+$route['report/attendances/export'] = 'attendances/export';
 
 // $route['danru'] = 'danru/login';

@@ -156,7 +156,7 @@
                         </a>
                     </li>
                     <li <?= $this->uri->segment(1) == 'attendance'  ? 'class="active"' : ''; ?>>
-                        <a href="<?= base_url('attendance') ?>">
+                        <a href="<?= base_url('attendances') ?>">
                             <i class="fa fa-check"></i> <span>Absensi</span>
                             <span class="pull-right-container">
                             </span>
@@ -215,7 +215,7 @@
                             </li>
                             <?php if ($this->session->userdata('id_role') == 1) : ?>
                                 <li <?= $this->uri->segment(1) == 'report' && $this->uri->segment(2) == 'attendance' ? 'class="active"' : ''; ?>>
-                                    <a href="<?= base_url('report/attendance'); ?>">
+                                    <a href="<?= base_url('report/attendances'); ?>">
                                         <i class="fa fa-circle-o"></i> <span>Attendance Report</span>
                                     </a>
                                 </li>

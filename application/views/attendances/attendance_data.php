@@ -177,7 +177,7 @@
             "processing": true,
             "serverSide": true,
             "ajax": {
-                "url": "<?= site_url('attendance/get_ajax') ?>",
+                "url": "<?= site_url('attendances/get_ajax') ?>",
                 "type": "POST"
             },
             "columnDefs": [{

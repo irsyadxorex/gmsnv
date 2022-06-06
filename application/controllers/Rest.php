@@ -2,28 +2,39 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 require APPPATH . 'libraries/REST_Controller.php';
-require APPPATH . 'libraries/Format.php';
 
 class Rest extends REST_Controller
 {
-    public function __construct()
+
+  public function __construct() {
+    parent::__construct();
+    $this->load->model('M_gms');
+  }
+    public function personil_auth_post()
     {
-        parent::__construct();
-        $this->load->model('M_tag');
-    }
-    // GMS
-    public function get_tag()
-    {
-        $tags = $this->db->get('gms_qrcode_tags')->result_array();
-        if ($tags) {
+        $username = $this->post('username');
+        $password = $this->post('password');
+        $cek = $this->m_get->get_personil_auth($username, $password);
+        if(!empty($cek)) {
+          if(password_verify($password, $cek->password)) {
+            // $this->response([
+            //         'status' => true,
+            //         'data' => $cek
+            //     ], REST_Controller::HTTP_OK);
+            $this->response($cek, REST_Controller::HTTP_OK);
+          }else{
             $this->response([
-                'status' => true,
-                'message' => $tags
-            ], REST_Controller::HTTP_OK);
+                'status' => false,
+                'data' => 'password salah'
+            ], REST_Controller::HTTP_NOT_FOUND);
+          }
+        }else{
+          $this->response([
+              'status' => false,
+              'data' => 'Karyawan tidak ditemukan'
+          ], REST_Controller::HTTP_NOT_FOUND);
         }
     }
-    // END GMS
-
     public function connect_whatsappdevice_get()
     {
         $deviceid = '11c74d86a737667a123b81efa1760530';
@@ -97,6 +108,8 @@ class Rest extends REST_Controller
             ], REST_Controller::HTTP_NOT_FOUND);
         }
     }
+
+
 
     //ABSEN WFH
     public function employees_authab_post()
@@ -212,10 +225,56 @@ class Rest extends REST_Controller
     }
 
     /////////////////////////// gms mobile need //////////////////////////////////
+
+    public function listactivitiesidsite_get()
+    {
+        $today = date('Y-m-d');
+        $data = $this->db->query("select ga.id_activity AS activityid,e.username AS name, ga.activity, ga.currentdatetime AS date_time, ga.images from gms_activities ga, users e where ga.id_user=e.id and date(ga.currentdatetime)='$today' order by ga.currentdatetime desc;")->result_array();
+        if(!empty($data)) {
+          $this->response([
+              'status' => true,
+              'data_activity' => $data
+          ], REST_Controller::HTTP_OK);
+      } else {
+          $this->response([
+              'status' => false,
+              'message' => 'kosongs'
+          ], REST_Controller::HTTP_NOT_FOUND);
+      }
+    }
+
+    public function checkpointbyqr_post()
+    {
+        $idCheck = $this->input->post('idCheck');
+        $tagId = $this->input->post('tagid_user');
+        $isClear = $this->input->post('isclear');
+        $note = $this->input->post('note');
+
+        $update_data=array(
+            'tagid_user'=>$tagId,
+            'isclear'=>$isClear,
+            'note'=>(strlen($note) > 0) ? $note : null,
+            'status'=>1
+        );
+        $data = $this->M_gms->update_checkpoint_details($update_data,$idCheck);
+
+        if ($data) {
+            $this->response([
+                'status' => true,
+                'data' => 'sukses input data'
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'status' => false,
+                'message' => 'Gagal input data'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
     public function shiftgms_get()
     {
         $id_site = $this->get('idsite');
-        $data = $this->m_gms->get_shifts($id_site);
+        $data = $this->M_gms->get_shifts($id_site);
         if ($data) {
             $this->response($data, REST_Controller::HTTP_OK);
         } else {
@@ -255,6 +314,175 @@ class Rest extends REST_Controller
         }
     }
 
+    public function listmemberPenghuni_get($param = null)
+    {
+      if(!empty($_GET['param'])){
+        $param =$_GET['param'];
+        $data = $this->db->query("select master_penghuni.id_penghuni, master_penghuni.blok, master_penghuni.kategori from master_penghuni WHERE blok LIKE'%$param%' order by id_penghuni ASC;")->result_array();
+        if(!empty($data)) {
+            $this->response([
+                'success' => true,
+                'data_penghuni' => $data
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'success' => false,
+                'data_penghuni' => $data
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+      }else{
+        $data = $this->db->query("select master_penghuni.id_penghuni, master_penghuni.blok, master_penghuni.kategori from master_penghuni order by id_penghuni ASC;")->result_array();
+        if(!empty($data)) {
+            $this->response([
+                'success' => true,
+                'data_penghuni' => $data
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'success' => false,
+                'data_penghuni' => $data
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+      }
+    }
+
+    public function listcheckpoint_get()
+    {
+        $idCheckpoint = $this->get('idCheckpoint');
+        $data = $this->db->query("select gnt.* from gms_checkpoint_details gnt where gnt.id_checkpoint='$idCheckpoint' order by id_check asc;")->result_array();
+        if ($data) {
+            $this->response([
+                'success' => true,
+                'data_checkpoint' => $data
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'success' => false,
+                'message' => 'list tidak ditemukan'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function listcheckpointall_get()
+    {
+        // $idCheckpoint = $this->get('idCheckpoint');
+        $data = $this->db->query("select gnt.* from gms_checkpoint_details gnt where gnt.status=1 order by id_check asc;")->result_array();
+        if ($data) {
+            $this->response([
+                'success' => true,
+                'data_checkpoint' => $data
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'success' => false,
+                'message' => 'list tidak ditemukan'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+    }
+
+    public function listKeperluan_get($param=null)
+    {
+      if(!empty($_GET['param'])){
+        $param =$_GET['param'];
+        $data = $this->db->query("select keperluan.id_perlu, keperluan.perlu from keperluan where perlu LIKE'%$param%' order by id_perlu ASC;")->result_array();
+
+        if ($data) {
+            $this->response([
+                'success' => true,
+                'data_keperluan' => $data
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'success' => false,
+                'message' => 'list tidak ditemukan'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+      }else{
+        $data = $this->db->query("select keperluan.id_perlu, keperluan.perlu from keperluan order by id_perlu ASC;")->result_array();
+
+        if(!empty($data)) {
+            $this->response([
+                'success' => true,
+                'data_keperluan' => $data
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'success' => false,
+                'message' => 'list tidak ditemukan'
+            ], REST_Controller::HTTP_NOT_FOUND);
+        }
+      }
+    }
+
+    public function newCheckpoint_post() {
+      $idUser = $this->post('idUser');
+      $idSite = $this->post('idSite');
+      $today = date('Y-m-d');
+      $data = $this->db->query("select * from gms_checkpoints where id_user='$idUser' and id_site='$idSite' and date(tanggal)='$today'")->result_array();
+      // print_r($data[0]['id']);
+      // die();
+      if(!empty($data)) {
+        $this->response([
+            'success' => true,
+            'data' => $data[0]['id'],
+        ], REST_Controller::HTTP_OK);
+      }else{
+        $checkpoint=array(
+          'id_site'=>$idSite,
+          'id_user'=>$idUser,
+          'tanggal'=>date('Y-m-d'),
+          'status'=>0,
+          'createdAt'=>date('Y-m-d H:i:s'),
+        );
+        $creates = $this->M_gms->create($checkpoint);
+
+        $tags = $this->M_gms->read_qrcodetag($idSite);
+        foreach ($tags as $key => $tag) {
+
+          $data=array(
+            'id_checkpoint'=>$creates,
+            'currentdatetime'=>date('Y-m-d H:i:s'),
+            'id_user'=>$idUser,
+            'id_site'=>$tag->id_site,
+            'label'=>$tag->label,
+            'lokasi'=>$tag->lokasi,
+            'tagid'=>$tag->tagid,
+            'tanggal'=>date('Y-m-d'),
+            'latitude_longitude_tag'=>$tag->latitude_longitude,
+            'created_at'=>date('Y-m-d H:i:s'),
+            'status'=>0,
+          );
+          $this->M_gms->create_checkpoint_details($data);
+
+        }
+        $this->response([
+            'success' => true,
+            'data' => "$creates",
+        ], REST_Controller::HTTP_OK);
+
+      }
+    }
+
+    public function checkEmptyCheckPoint_get()
+    {
+      $idTag = $this->get('idTag');
+      $today = date('Y-m-d');
+      $data = $this->db->query("select * from gms_checkpoints where tagid='$idTag' and date(tanggal)='$today'")->result_array();
+      if(!empty($data)) {
+        if ($data) {
+            $this->response([
+                'success' => true,
+                'data' => 1
+            ], REST_Controller::HTTP_OK);
+        } else {
+            $this->response([
+                'success' => false,
+                'data' => 0
+            ], REST_Controller::HTTP_OK);
+        }
+      }
+    }
+
     /////////////////// CHART REQUIREMENT
     public function activeemployeecount_get()
     {
@@ -271,6 +499,7 @@ class Rest extends REST_Controller
             ], REST_Controller::HTTP_NOT_FOUND);
         }
     }
+
     public function pkwtcount_get()
     {
         $data = $this->db->query("select year(insert_datetime) as tahun, count(*) as total from employees where year(insert_datetime) BETWEEN 2020 and 2022 group by tahun order by tahun asc;")->result_array();

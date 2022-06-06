@@ -63,10 +63,10 @@ class Team extends CI_Controller
             $this->form_validation->set_rules('password2', 'Confirm Password', 'trim|required|matches[password1]');
             $this->form_validation->set_rules('password1', 'Password', 'trim|required|matches[password2]');
         }
-        $this->form_validation->set_rules('position', 'Position', 'required');
-        $this->form_validation->set_rules('identitas', 'Identitas', 'required');
-        $this->form_validation->set_rules('jenis_kelamin', 'jenis_kelamin', 'required');
-        $this->form_validation->set_rules('telephone', 'telephone', 'required');
+        // $this->form_validation->set_rules('position', 'Position', 'required');
+        // $this->form_validation->set_rules('identitas', 'Identitas', 'required');
+        // $this->form_validation->set_rules('jenis_kelamin', 'jenis_kelamin', 'required');
+        // $this->form_validation->set_rules('telephone', 'telephone', 'required');
         if ($this->form_validation->run() == false) {
             $this->template->load('templates/template', 'teams/team_edit', $data);
         } else {

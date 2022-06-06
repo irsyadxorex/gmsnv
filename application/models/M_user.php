@@ -109,7 +109,7 @@ class M_user extends CI_Model
             'nama' => $this->input->post('nama'),
             'username' => strtolower($this->input->post('username')),
             'email' => $this->input->post('email'),
-            'password' => password_hash($this->input->post('username') . '123', PASSWORD_DEFAULT),
+            'password' => password_hash(($this->input->post('username') . 123), PASSWORD_DEFAULT),
             'id_site' => $this->session->userdata('id_site') != 0 ? $this->session->userdata('id_site') : $this->input->post('id_site'),
             'id_role' => 5,
             'id_position' => $this->input->post('position'),
